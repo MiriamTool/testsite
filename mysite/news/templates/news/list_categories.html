@@ -1,0 +1,9 @@
+<div class="list-group">
+    {% for item in categories %}
+    <a href="{{ item.get_absolute_url }}" {% comment %} Тут используем обращение к объекту модели, вызвали метод объекта get_absolute_url без скобок для получения ссылки {% endcomment %}
+       class="list-group-item list-group-item-action"
+       aria-current="true">
+        {{ item.title }}
+    </a>
+    {% endfor %}
+</div>
