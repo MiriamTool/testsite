@@ -28,7 +28,8 @@ def add_news(request):
         form = NewsForm(request.POST, error_class=DivErrorList)
         if form.is_valid():
             # print(form.cleaned_data)
-            news = News.objects.create(**form.cleaned_data) #Две звезды - автораспаковка словаря в питоне
+            # news = News.objects.create(**form.cleaned_data) #Две звезды - автораспаковка словаря в питоне, cleaned_data - готовый к упротреблению словарик отвалидированных данных
+            news = form.save()
             return redirect(news)
     else:
         form = NewsForm()

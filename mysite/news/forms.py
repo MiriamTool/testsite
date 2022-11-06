@@ -2,7 +2,7 @@ from django import forms
 
 from django.forms.utils import ErrorList
 
-from .models import Category
+from .models import News
 
 class DivErrorList(ErrorList):
     def __str__(self):
@@ -14,15 +14,18 @@ class DivErrorList(ErrorList):
         return '<div class="custom_errorlist">%s</div>' % ''.join(['<div class="custom_errorlist">%s</div>' % e for e in self])
 
 
-class NewsForm(forms.Form):
-    title = forms.CharField(max_length=150, label='Название новости', widget=forms.TextInput(attrs={"class": "form-control"}))
-    content = forms.CharField(label='Текст новости', required=False, widget=forms.Textarea(
-        attrs={
-            "class": "form-control",
-            "rows": 5
-        }))
-    is_published = forms.BooleanField(label='Опубликовано?', initial=True)
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), label='Категория', empty_label='Выберите категорию', widget=forms.Select(
-        attrs={
-            "class": "form-control"
-        }))
+class NewsForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(NewsForm, self).__init__(*args, **kwargs)
+        self.fields['category'].empty_label = 'Выберите категорию'
+
+    class Meta:
+        model = News
+        #fields = '__all__'
+        fields = ['title', 'content', 'is_published', 'category']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'category': forms.Select(attrs={'class': 'form-control'})
+        }
