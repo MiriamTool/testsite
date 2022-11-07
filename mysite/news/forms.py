@@ -4,6 +4,10 @@ from django.forms.utils import ErrorList
 
 from .models import News
 
+from django.core.exceptions import ValidationError
+
+import re
+
 class DivErrorList(ErrorList):
     def __str__(self):
         return self.as_divs()
@@ -29,3 +33,15 @@ class NewsForm(forms.ModelForm):
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'category': forms.Select(attrs={'class': 'form-control'})
         }
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if re.match(r'\d', title):
+            raise ValidationError('Название не должно начинаться с цифры')
+        return title
+
+    def clean_is_published(self):
+        is_published = self.cleaned_data['is_published']
+        if not is_published:
+            raise ValidationError('Новость должна быть отмечена, как опубликованная')
+        return is_published
