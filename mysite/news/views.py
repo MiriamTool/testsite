@@ -1,8 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
 
 from .models import News, Category
 from .forms import NewsForm, DivErrorList
 
+class HomeNews(ListView):
+    model = News #модель, из которой получается список, аналог news = News.objects.all()
+    template_name = 'news/home_news_list.html' #жесткое задание шаблона, иначе назначится дефолтное имя news_list.html
+    context_object_name = 'news' #переименование контекстного объекта, по дефролту был бы object_list
+    # extra_context = {'title': 'Главная'} не рекомендуется использовать, лучше использовать как ниже метод гет_контекст_дата, возвращающую модифицированный контекст
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Главная страница'
+        return context
+
+    def get_queryset(self):
+        return News.objects.filter(is_published=True) #фильтр запроса для query_set, передаём только новости, у которых is_published == 1
 
 def index(request):
     print(request)
