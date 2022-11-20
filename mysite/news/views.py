@@ -23,26 +23,38 @@ class NewsByCategory(ListView):
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
+    slug_url_kwarg = 'category_slug'
     allow_empty = False #запрещает обращаться к пустому списку, т.е. блокирует выведение категорий, в которых нет опубликованных новостей, либо несуществующих категорий
 
+    # def get_queryset(self):
+    #     return News.objects.filter(category_id=self.kwargs['category_id'],
+    #                                is_published=True)
+
     def get_queryset(self):
-        return News.objects.filter(category_id=self.kwargs['category_id'],
+        return News.objects.filter(category__slug=self.kwargs['category_slug'],
                                    is_published=True)
+
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['title'] = Category.objects.get(pk=self.kwargs['category_id'])
+    #     return context
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = Category.objects.get(pk=self.kwargs['category_id'])
+        context['title'] = Category.objects.get(slug=self.kwargs['category_slug'])
         return context
+
 
 class ViewNews(DetailView):
     model = News
     context_object_name = 'news_item'
+    slug_url_kwarg = 'news_slug'
     # pk_url_kwarg = 'news_id'
     # template_name = 'news/news_detail.html' #дефолтное значение имени темплейта *_detail
 
 class CreateNews(CreateView):
     form_class = NewsForm
-
     template_name = 'news/add_news.html'
     # success_url = reverse_lazy('home') #по дефолту при успешном выполнении, редирект происходит на ссылку, которая автоматически получается методом get_absolute_url модели, но можно прописать свой путь
 

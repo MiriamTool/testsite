@@ -3,7 +3,7 @@ from django.urls import reverse
 
 class News(models.Model):
     title = models.CharField(max_length=150, verbose_name='Наименование')
-    # slug = models.SlugField(max_length=150, unique=True, db_index=True, verbose_name='URL')
+    slug = models.SlugField(max_length=150, unique=True, db_index=True, verbose_name='URL')
     content = models.TextField(blank=True, verbose_name='Контент')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
@@ -16,7 +16,8 @@ class News(models.Model):
         return 'Hello from model'
 
     def get_absolute_url(self):
-        return reverse('view_news', kwargs={"pk": self.pk})
+        return reverse('view_news', kwargs={"news_slug": self.slug}) #здесь раньше был news_id, но теперь тут слаг
+
 
 
     def __str__(self):
@@ -29,11 +30,11 @@ class News(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=150, db_index=True, verbose_name='Наименование категории')
-    # slug = models.SlugField(max_length=150, unique=True, db_index=True,
-    #                       verbose_name='URL')
+    slug = models.SlugField(max_length=150, unique=True, db_index=True,
+                           verbose_name='URL')
 
     def get_absolute_url(self):
-        return reverse('category', kwargs={"category_id": self.pk}) #kwargs - именованные аргументы для построения данного маршрута. Метод нужен для автосоздания ссылки, аналог тега url для пайтон-файлов
+        return reverse('category', kwargs={"category_slug": self.slug}) #kwargs - именованные аргументы для построения данного маршрута. Метод нужен для автосоздания ссылки, аналог тега url для пайтон-файлов
 
     def __str__(self):
         return self.title
