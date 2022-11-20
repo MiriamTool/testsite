@@ -4,6 +4,10 @@
        class="list-group-item list-group-item-action"
        aria-current="true">
         {{ item.title }}
+        <span class="badge bg-primary rounded-pill">{{ item.cnt }}</span>
+        {% comment %} item.cnt можно использовать, т.к. в template_tags мы аннотировали cnt {% endcomment %}
     </a>
+
+
     {% endfor %}
 </div>
