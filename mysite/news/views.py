@@ -1,11 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from .models import News, Category
 from .forms import NewsForm, DivErrorList
+from .utils import *
 
 class HomeNews(ListView):
+    paginate_by = 3
     model = News #модель, из которой получается список, аналог news = News.objects.all()
     template_name = 'news/home_news_list.html' #жесткое задание шаблона, иначе назначится дефолтное имя news_list.html
     context_object_name = 'news' #переименование контекстного объекта, по дефролту был бы object_list
@@ -19,7 +23,8 @@ class HomeNews(ListView):
     def get_queryset(self):
         return News.objects.filter(is_published=True) #фильтр запроса для query_set, передаём только новости, у которых is_published == 1
 
-class NewsByCategory(ListView):
+class NewsByCategory(DataMixin, ListView): #DataMixin - класс, от которого наследуется метод get_user_context
+    paginate_by = 3
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
@@ -42,7 +47,10 @@ class NewsByCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = Category.objects.get(slug=self.kwargs['category_slug'])
+        c_def = self.get_user_context(**kwargs)
+        context = dict(list(context.items()) + list(c_def.items()))
+        # context['title'] = Category.objects.get(slug=self.kwargs['category_slug']) #убираем, т.к. в классе DataMixin прописана эта строчка
+
         return context
 
 
@@ -53,9 +61,16 @@ class ViewNews(DetailView):
     # pk_url_kwarg = 'news_id'
     # template_name = 'news/news_detail.html' #дефолтное значение имени темплейта *_detail
 
-class CreateNews(CreateView):
+class CreateNews(LoginRequiredMixin, CreateView):
     form_class = NewsForm
     template_name = 'news/add_news.html'
+    login_url = reverse_lazy('home')
+    raise_exception = True # Выводит ошибку 403 - доступ запрещён
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['title'] = 'Добавить новость'
+    #     return context
     # success_url = reverse_lazy('home') #по дефолту при успешном выполнении, редирект происходит на ссылку, которая автоматически получается методом get_absolute_url модели, но можно прописать свой путь
 
 

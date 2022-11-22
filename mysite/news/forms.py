@@ -27,10 +27,12 @@ class NewsForm(forms.ModelForm):
     class Meta:
         model = News
         #fields = '__all__'
-        fields = ['title', 'content', 'is_published', 'category']
+        fields = ['title', 'slug', 'content', 'photo', 'is_published', 'category']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'})
         }
 
