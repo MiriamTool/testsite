@@ -13,4 +13,7 @@ urlpatterns = [
     path('news/<slug:news_slug>/', ViewNews.as_view(), name='view_news'),
     # path('news/add-news/', add_news, name='add_news'),
     path('news/add-news', CreateNews.as_view(), name='add_news'),
+    path('login/', LoginUser.as_view(), name='login'),
+    path('logout/', logout_user, name='logout'),
+    path('register/', RegisterUser.as_view(), name='register'),
 ]

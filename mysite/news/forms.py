@@ -1,6 +1,9 @@
 from django import forms
 
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
+
 
 from .models import News
 
@@ -47,3 +50,20 @@ class NewsForm(forms.ModelForm):
         if not is_published:
             raise ValidationError('Новость должна быть отмечена, как опубликованная')
         return is_published
+
+
+class RegisterUserForm(UserCreationForm):
+    username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-input'}))
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    password2 = forms.CharField(label='Повтор пароля', widget=forms.PasswordInput(attrs={
+        'class': 'form-input'}))  # переопределяем поля для того, чтобы заработали стили (виджеты в forms.py почему-то не робят
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+
+class LoginUserForm(AuthenticationForm):
+    username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-class'}))
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-class'}))

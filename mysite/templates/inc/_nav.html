@@ -9,6 +9,18 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Главная</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'add_news' %}">Добавить новость</a></li>
       </ul>
+      <ul class="navbar-nav col-3">
+        {% if request.user.is_authenticated %}
+        <span class="navbar-text">
+          {{ user.username }} |
+        </span>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выйти</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Войти</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Регистрация</a></li>
+        {% endif %}
+
+      </ul>
     </div>
   </div>
   </nav>

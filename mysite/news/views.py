@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout, login
+from django.contrib.auth.forms import AuthenticationForm
 
 from .models import News, Category
-from .forms import NewsForm, DivErrorList
+from .forms import *
 from .utils import *
 
 class HomeNews(ListView):
@@ -104,3 +106,36 @@ def get_category(request, category_id):
 #     else:
 #         form = NewsForm()
 #     return render(request, 'news/add_news.html', {'form': form})
+
+
+class RegisterUser(CreateView):
+    form_class = RegisterUserForm
+    template_name = 'news/register.html'
+    success_url = reverse_lazy('login')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Страница регистрации'
+        return context
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('home')
+
+
+class LoginUser(LoginView):
+    form_class = LoginUserForm
+    template_name = 'news/login.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Авторизация'
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('home')
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
