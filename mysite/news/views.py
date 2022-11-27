@@ -23,7 +23,8 @@ class HomeNews(ListView):
         return context
 
     def get_queryset(self):
-        return News.objects.filter(is_published=True) #фильтр запроса для query_set, передаём только новости, у которых is_published == 1
+        return News.objects.filter(is_published=True).select_related('category') #фильтр запроса для query_set, передаём только новости, у которых is_published == 1
+    # Select_related - жадный запрос для оптимизации вывода категорий статей в файле home_news_list.html
 
 class NewsByCategory(DataMixin, ListView): #DataMixin - класс, от которого наследуется метод get_user_context
     paginate_by = 3
@@ -39,7 +40,7 @@ class NewsByCategory(DataMixin, ListView): #DataMixin - класс, от кот�
 
     def get_queryset(self):
         return News.objects.filter(category__slug=self.kwargs['category_slug'],
-                                   is_published=True)
+                                   is_published=True).select_related('category') #оптимизация с помощью жадных запросов
 
 
     # def get_context_data(self, *, object_list=None, **kwargs):
