@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
+from captcha.fields import CaptchaField
 
 
 from .models import News
@@ -67,3 +68,10 @@ class RegisterUserForm(UserCreationForm):
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-class'}))
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-class'}))
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Имя', max_length=255, widget=forms.TextInput(attrs={'class': 'form-class'}))
+    email = forms.EmailField(label='Email', widget=forms.TextInput(attrs={'class': 'form-class'}))
+    content = forms.CharField(label='Комментарий', widget=forms.Textarea(attrs={'class': 'form-class', 'cols': 60, 'rows': 10}))
+    captcha = CaptchaField()

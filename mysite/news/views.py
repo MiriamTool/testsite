@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, FormView
 from django.contrib.auth import logout, login
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -140,3 +140,18 @@ class LoginUser(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+class ContactFormView(FormView):
+    form_class = ContactForm
+    template_name = 'news/contact.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Контактная форма'
+        return context
+
+    def form_valid(self, form):
+        print(form.cleaned_data) #вывод полученных из формы данных в терминал
+        return redirect('home')
